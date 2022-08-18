@@ -47,7 +47,7 @@ def metadata_json_output(metadata):
     return json.dumps(json_result, indent=None)
 
 def fetch_audio_file():
-    file = open("./audio/test3.wav", "rb")
+    file = open("./audio/long.wav", "rb")
     audio = np.frombuffer(file.read(), dtype=np.int16)
     return audio
 

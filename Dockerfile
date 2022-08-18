@@ -15,7 +15,9 @@ ARG FUNCTION_DIR
 RUN mkdir -p ${FUNCTION_DIR}
 
 COPY app.py ${FUNCTION_DIR}
+COPY audio/* ${FUNCTION_DIR}/audio/
 
+RUN mkdir ${FUNCTION_DIR}/models
 RUN curl -L -o ${FUNCTION_DIR}/models/models.pbmm https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm
 RUN curl -L -o ${FUNCTION_DIR}/models/models.scorer https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer
 

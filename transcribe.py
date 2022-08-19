@@ -1,10 +1,8 @@
-import os
-from deepspeech import Model
-import numpy as np
 import json
+from time import sleep
+import workers
 
-model_path = "./models/models.pbmm"
-scorer_path = "./models/models.scorer"
+audio_mapping_file = "./tmp/audio-mapping.json"
 
 def words_from_candidate_transcript(metadata):
     word = ""
@@ -47,29 +45,21 @@ def metadata_json_output(metadata):
     } for transcript in metadata.transcripts]
     return json.dumps(json_result, indent=None)
 
-def fetch_audio_file():
-    file = open("./audio/long.wav", "rb")
-    audio = np.frombuffer(file.read(), dtype=np.int16)
-    return audio
+def do_transcribe(cursor_key):
+    sleep(2)
+    return cursor_key
 
-# TODO: Transcode audio to have same sample rate as DS using Sox
-def lambda_handler(event, context):
-    ds = Model(model_path)
-    statusCode = 200
-    response = None
-    print(event)
-    try:
-        ds.enableExternalScorer(scorer_path)
-        samplerate = ds.sampleRate()
-        print("Deepspeech sample rate " + str(samplerate))
-        audio = fetch_audio_file()
-        response = metadata_json_output(ds.sttWithMetadata(audio, 2))
-    except Exception as ex:
-        print("Error occurred attempting to transcribe")
-        print(ex)
-        statusCode = 400
-        response = "TRANSCRIBE_FAILED"
-    return {
-        "statusCode": statusCode,
-        "body": response
-    }
+def task_complete(result):
+    print("Transcribe complete", result)
+
+def run(ds):
+    f = open(audio_mapping_file, "r")
+    mapping = dict(json.loads(f.read()))
+    first_key = next(iter(mapping))
+    cursor_key = first_key
+    while cursor_key is not None:
+        cursor = mapping[cursor_key]
+        print("Transcribing audio chunk " + cursor_key + " " + str(cursor["size"]) + "kbs")
+        workers.register_task(do_transcribe, cursor_key, cursor_key)
+        cursor_key = cursor["next"]
+    workers.run(task_complete)

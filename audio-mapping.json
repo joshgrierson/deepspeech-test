@@ -1,0 +1,12 @@
+{
+    "file001.wav": {
+        "size": 120,
+        "transcribed": "",
+        "next": "file002.wav"
+    },
+    "file002.wav": {
+        "size": 150,
+        "transcribed": "",
+        "next": null
+    }
+}

@@ -14,7 +14,7 @@ ARG FUNCTION_DIR
 
 RUN mkdir -p ${FUNCTION_DIR}
 
-COPY app.py ${FUNCTION_DIR}
+COPY src/* ${FUNCTION_DIR}
 COPY audio/* ${FUNCTION_DIR}/audio/
 
 RUN mkdir ${FUNCTION_DIR}/models

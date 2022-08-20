@@ -48,7 +48,7 @@ def metadata_json_output(metadata):
     return json_result
 
 def do_transcribe(ds, cursor_key):
-    file = open(audio_tmp_dir + cursor_key, "r")
+    file = open(audio_tmp_dir + cursor_key, "rb")
     audio = np.frombuffer(file.read(), dtype=np.int16)
     # return ds.sttWithMetadata(audio, 1)
     return ds.stt(audio)

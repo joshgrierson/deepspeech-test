@@ -28,14 +28,18 @@ def generate_audio_mapping():
             }
     return map
 
-def chunk_fn(audio_input, audio_ouput, duration = 0.1):
+def chunk_fn(audio_input, audio_ouput, duration = 0.1, sample_rate=16):
     output = audio_dir + "/" + audio_ouput
     try:
         print("Chunking audio...")
         setup_tmp_dir()
         str_duration = str(duration)
         subprocess.call([
-            "sox", audio_input, output,
+            "sox", audio_input,
+            "-r", str(sample_rate),
+            "-c", str(1),
+            "-b", str(16),
+            output,
             "silence",
             "1", str_duration, "1%",
             "1", str_duration, "1%",
